@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "netlify-lambda install",
-    "buildNetlify": "netlify-lambda build functions",
+    "buildNetlify": "netlify-lambda build src",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "devNetlify": "netlify-lambda serve functions"
+    "devNetlify": "netlify-lambda serve src"
   },
   "repository": {
     "type": "git",
