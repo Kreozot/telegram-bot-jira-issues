@@ -28,11 +28,11 @@ export default async (ctx: Context) => {
   const number = Number(search);
   const answer = [{
     id: '0',
-    title: 'Ну давай, попробуй',
+    title: 'Ну давай, попробуй!',
     type: 'article',
     input_message_content: {
       message_text: search.replace(/пыщь/gm, '[попячсо](http://upyachka.ru)'),
-      parse_mode: 'HTML'
+      parse_mode: 'MarkdownV2'
     }
   }];
   return ctx.answerInlineQuery(answer as any);
