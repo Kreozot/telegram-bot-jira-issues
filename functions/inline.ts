@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const ISSUE_REGEXP = /[A-Z]+-[0-9]+/gm;
+const ISSUE_REGEXP = /[A-Z][A-Z0-9]+-[0-9]+/gm;
 
 const getJiraIssueUrl = (issueKey: string): string => {
   return `https://${ process.env.JIRA_HOST }/browse/${ issueKey }`;
