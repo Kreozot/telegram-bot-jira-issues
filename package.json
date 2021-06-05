@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "netlify-lambda install",
+    "buildNetlify": "netlify-lambda build functions",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "devNetlify": "netlify-lambda serve functions"
   },
   "repository": {
     "type": "git",
@@ -17,6 +20,7 @@
   },
   "homepage": "https://github.com/Kreozot/telegram-bot-jira-issues#readme",
   "dependencies": {
+    "netlify-lambda": "^2.0.8",
     "telegraf": "^4.3.0"
   }
 }
