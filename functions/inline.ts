@@ -30,19 +30,21 @@ const getJiraIssues = async (issueKeys: string[]) => {
     strictSSL: true
   });
 
-  return Promise.all(issueKeys.map(async (key) => {
-    try {
-      const result = await jira.findIssue(key);
-      return result;
-    } catch (err) {
-      if (err.statusCode === 404) {
-        console.warn(`Не найдена задача ${ key }`);
-      } else {
-        console.error(err);
+  return Promise.all(
+    issueKeys.map(async (issueKey) => {
+      try {
+        const issue = await jira.findIssue(issueKey);
+        return issue;
+      } catch (err) {
+        if (err.statusCode === 404) {
+          console.warn(`Не найдена задача ${ issueKey }`);
+        } else {
+          console.error(err);
+        }
+        return null;
       }
-      return null;
-    }
-  }));
+    })
+  );
 };
 
 const getJiraIssueKeys = (text: string) => {
@@ -84,12 +86,15 @@ const escapeMarkdown = (text: string): string => {
 }
 
 export default async (ctx: Context) => {
-  if (!ctx.inlineQuery || !['group', 'supergroup'].includes(ctx.inlineQuery.chat_type)) {
+  if (!ctx.inlineQuery) {
+    return;
+  }
+  if (!['group', 'supergroup'].includes(ctx.inlineQuery.chat_type || '')) {
     console.warn(`Заблокировано сообщение не из группы (${ ctx.inlineQuery.from.username })`);
     return;
   }
 
-  const text = (ctx.inlineQuery && ctx.inlineQuery.query || "");
+  const text = (ctx.inlineQuery.query || "");
   const issueKeys = getJiraIssueKeys(text);
   if (issueKeys.length === 0) {
     return;
