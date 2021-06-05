@@ -91,8 +91,9 @@ const isChatAllowed = (chatId: number): boolean => {
 }
 
 export default async (ctx: Context) => {
-  if (!isChatAllowed(ctx.message.chat.id)) {
-    console.warn(`Попытка доступа из неразрешённого чата ${ ctx.message.chat.id }`);
+  console.log(JSON.stringify(ctx, null, 2));
+  if (!isChatAllowed(ctx.senderChat.id)) {
+    console.warn(`Попытка доступа из неразрешённого чата ${ ctx.senderChat.id }`);
     return;
   }
 
