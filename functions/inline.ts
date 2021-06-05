@@ -14,7 +14,7 @@ const checkEnvs = (envNames: string[]) => {
   })
 }
 
-checkEnvs(['JIRA_HOST', 'JIRA_USERNAME', 'JIRA_API_TOKEN', 'ALLOWED_CHAT_IDS']);
+checkEnvs(['JIRA_HOST', 'JIRA_USERNAME', 'JIRA_API_TOKEN']);
 
 const getJiraIssueUrl = (issueKey: string): string => {
   return `https://${ process.env.JIRA_HOST }/browse/${ issueKey }`;
@@ -83,17 +83,9 @@ const escapeMarkdown = (text: string): string => {
     .replace(/\./g, "\\.");
 }
 
-const isChatAllowed = (chatId: number): boolean => {
-  const allowedChats = process.env.ALLOWED_CHAT_IDS
-    .split(';')
-    .map((id) => Number(id));
-  return allowedChats.includes(chatId);
-}
-
 export default async (ctx: Context) => {
-  console.log(JSON.stringify(ctx, null, 2));
-  if (!isChatAllowed(ctx.senderChat.id)) {
-    console.warn(`Попытка доступа из неразрешённого чата ${ ctx.senderChat.id }`);
+  if (!ctx.inlineQuery || ['group', 'supergroup'].includes(ctx.inlineQuery.chat_type)) {
+    console.warn(`Заблокировано сообщение не из группы (${ ctx.inlineQuery.from.username })`);
     return;
   }
 
@@ -114,7 +106,7 @@ export default async (ctx: Context) => {
     input_message_content: {
       message_text: escapeMarkdown(newText),
       parse_mode: 'MarkdownV2'
-    }
+    },
   }];
   return ctx.answerInlineQuery(answer as any);
 };
