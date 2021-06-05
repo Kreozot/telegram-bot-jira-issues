@@ -1,4 +1,4 @@
 [build]
   publish = "build"
-  command = "netlify-lambda build functions"
+  command = "netlify-lambda build functions  --config ./config/webpack.functions.js"
   functions = "build/functions"
