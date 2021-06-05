@@ -6,10 +6,6 @@ dotenv.config();
 
 const ISSUE_REGEXP = /[A-Z][A-Z0-9]+-[0-9]+/gm;
 
-const getJiraIssueUrl = (issueKey: string): string => {
-  return `https://${ process.env.JIRA_HOST }/browse/${ issueKey }`;
-}
-
 const checkEnvs = (envNames: string[]) => {
   envNames.forEach((envName) => {
     if (!process.env[envName]) {
@@ -18,9 +14,13 @@ const checkEnvs = (envNames: string[]) => {
   })
 }
 
-const getJiraIssues = async (issueKeys: string[]) => {
-  checkEnvs(['JIRA_HOST', 'JIRA_USERNAME', 'JIRA_API_TOKEN']);
+checkEnvs(['JIRA_HOST', 'JIRA_USERNAME', 'JIRA_API_TOKEN', 'ALLOWED_CHAT_IDS']);
 
+const getJiraIssueUrl = (issueKey: string): string => {
+  return `https://${ process.env.JIRA_HOST }/browse/${ issueKey }`;
+}
+
+const getJiraIssues = async (issueKeys: string[]) => {
   const jira = new JiraApi({
     protocol: 'https',
     host: String(process.env.JIRA_HOST),
@@ -83,7 +83,18 @@ const escapeMarkdown = (text: string): string => {
     .replace(/\./g, "\\.");
 }
 
+const isChatAllowed = (chatId: number): boolean => {
+  const allowedChats = process.env.ALLOWED_CHAT_IDS
+    .split(';')
+    .map((id) => Number(id));
+  return allowedChats.includes(chatId);
+}
+
 export default async (ctx: Context) => {
+  if (!isChatAllowed(ctx.message.chat.id)) {
+    return;
+  }
+
   const text = (ctx.inlineQuery && ctx.inlineQuery.query || "");
   const issueKeys = getJiraIssueKeys(text);
   if (issueKeys.length === 0) {
