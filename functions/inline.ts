@@ -74,6 +74,15 @@ const replaceJiraIssueKeys = (text: string, jiraIssuesMap: Map<string, string>):
     );
 };
 
+const escapeMarkdown = (text: string): string => {
+  return text
+    .replace(/_/gi, "\\_")
+    .replace(/-/gi, "\\-")
+    .replace("~", "\\~")
+    .replace(/`/gi, "\\`")
+    .replace(/\./g, "\\.");
+}
+
 export default async (ctx: Context) => {
   const text = (ctx.inlineQuery && ctx.inlineQuery.query || "");
   const issueKeys = getJiraIssueKeys(text);
@@ -90,7 +99,7 @@ export default async (ctx: Context) => {
     title: `Обогатить информацией из Jira (${ issueKeys.join(', ') })`,
     type: 'article',
     input_message_content: {
-      message_text: newText,
+      message_text: escapeMarkdown(newText),
       parse_mode: 'MarkdownV2'
     }
   }];
