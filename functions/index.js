@@ -1,4 +1,4 @@
-const Telegraf = require('telegraf');
+const { Telegraf } = require('telegraf');
 const startAction = require('./start')
 const inlineAction = require('./inline')
 

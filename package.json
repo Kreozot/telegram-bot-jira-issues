@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "netlify-lambda install",
-    "buildNetlify": "netlify-lambda build src",
+    "buildNetlify": "netlify-lambda build functions --config ./config/webpack.functions.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "devNetlify": "netlify-lambda serve src"
+    "devNetlify": "netlify-lambda serve functions --config ./config/webpack.functions.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,8 @@
   },
   "homepage": "https://github.com/Kreozot/telegram-bot-jira-issues#readme",
   "dependencies": {
-    "netlify-lambda": "^2.0.8",
-    "telegraf": "^4.3.0"
+    "encoding": "^0.1.13",
+    "netlify-lambda": "2.0.8",
+    "telegraf": "4.3.0"
   }
 }
