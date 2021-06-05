@@ -106,7 +106,7 @@ export default async (ctx: Context) => {
 
   const answer = [{
     id: '0',
-    title: `Обогатить информацией из Jira (${ issueKeys.join(', ') })`,
+    title: `Обогатить *информацией* из Jira (${ issueKeys.join(', ') })`,
     type: 'article',
     input_message_content: {
       message_text: escapeMarkdown(newText),
