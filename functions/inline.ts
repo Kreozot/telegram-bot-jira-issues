@@ -84,7 +84,7 @@ const escapeMarkdown = (text: string): string => {
 }
 
 export default async (ctx: Context) => {
-  if (!ctx.inlineQuery || ['group', 'supergroup'].includes(ctx.inlineQuery.chat_type)) {
+  if (!ctx.inlineQuery || !['group', 'supergroup'].includes(ctx.inlineQuery.chat_type)) {
     console.warn(`Заблокировано сообщение не из группы (${ ctx.inlineQuery.from.username })`);
     return;
   }
