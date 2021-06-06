@@ -14,7 +14,7 @@ const checkEnvs = (envNames: string[]) => {
   })
 }
 
-checkEnvs(['JIRA_HOST', 'JIRA_USERNAME', 'JIRA_API_TOKEN']);
+checkEnvs(['JIRA_HOST', 'JIRA_USERNAME', 'JIRA_API_TOKEN', 'ALLOWED_USERS']);
 
 const getJiraIssueUrl = (issueKey: string): string => {
   return `https://${ process.env.JIRA_HOST }/browse/${ issueKey }`;
@@ -85,12 +85,22 @@ const escapeMarkdown = (text: string): string => {
     .replace(/\./g, "\\.");
 }
 
+const isUserAllowed = (id: number, username?: string): boolean => {
+  const allowedUsers = String(process.env.ALLOWED_USERS).split(';');
+  return allowedUsers.includes(String(id))
+    || ((typeof username === 'string') && allowedUsers.includes(username));
+}
+
 export default async (ctx: Context) => {
   if (!ctx.inlineQuery) {
     return;
   }
   if (!['group', 'supergroup'].includes(ctx.inlineQuery.chat_type || '')) {
-    console.warn(`Заблокировано сообщение не из группы (${ ctx.inlineQuery.from.username })`);
+    console.warn('Заблокировано сообщение не из группы', ctx.inlineQuery.from);
+    return;
+  }
+  if (!isUserAllowed(ctx.inlineQuery.from.id, ctx.inlineQuery.from.username)) {
+    console.warn('Заблокировано сообщение от неавторизованного пользователя', ctx.inlineQuery.from);
     return;
   }
 
