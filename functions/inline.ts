@@ -76,8 +76,12 @@ const replaceJiraIssueKeys = (text: string, jiraIssuesMap: Map<string, string>):
     );
 };
 
-const escapeMarkdown = (text: string): string => {
-  return text.replace(/([_\-~`.()])/gi, "\\$1");
+const escapeMarkdownBefore = (text: string): string => {
+  return text.replace(/([_~`.()])/gi, "\\$1");
+}
+
+const escapeMarkdownAfter = (text: string): string => {
+  return text.replace(/([\-])/gi, "\\$1");
 }
 
 const isUserAllowed = (id: number, username?: string): boolean => {
@@ -103,14 +107,14 @@ export default async (ctx: Context) => {
 
   const jiraIssues = await getJiraIssues(issueKeys);
   const jiraIssuesMap = getJiraIssuesMap(jiraIssues);
-  const newText = replaceJiraIssueKeys(escapeMarkdown(text), jiraIssuesMap);
+  const newText = replaceJiraIssueKeys(escapeMarkdownBefore(text), jiraIssuesMap);
 
   const answer = [{
     id: '0',
     title: `Обогатить информацией из Jira (${ [...jiraIssuesMap.keys()].join(', ') })`,
     type: 'article',
     input_message_content: {
-      message_text: newText,
+      message_text: escapeMarkdownAfter(newText),
       parse_mode: 'MarkdownV2'
     },
   }];
