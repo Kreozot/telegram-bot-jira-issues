@@ -102,14 +102,15 @@ export default async (ctx: Context) => {
   }
 
   const text = (ctx.inlineQuery.query || "");
+  console.log(1, text);
   const issueKeys = getJiraIssueKeys(text);
+  console.log(1, issueKeys);
   if (issueKeys.length === 0) {
     return;
   }
 
   const jiraIssues = await getJiraIssues(issueKeys);
   const jiraIssuesMap = getJiraIssuesMap(jiraIssues);
-  console.log(1, text);
   const newText = replaceJiraIssueKeys(escapeMarkdownBefore(text), jiraIssuesMap);
   console.log(2, newText);
   console.log(3, escapeMarkdownAfter(newText));
