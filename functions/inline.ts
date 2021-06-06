@@ -51,12 +51,22 @@ const getJiraIssueKeys = (text: string) => {
   return [...text.matchAll(ISSUE_REGEXP)].map((match) => match[0]);
 };
 
+// Don't replace `-` before in order to not prevent issue keys parsing
+const escapeMarkdownBefore = (text: string): string => {
+  return text.replace(/([_~`.()])/gi, "\\$1");
+}
+
+const escapeMarkdownAfter = (text: string): string => {
+  return text.replace(/([\-])/gi, "\\$1");
+}
+
 const getJiraIssuesMap = (jiraIssues: (JiraApi.JsonResponse | null)[]): Map<string, string> => {
   return jiraIssues
     .reduce<Map<string, string>>(
       (result, issue) => {
         if (issue) {
-          result.set(issue.key, `[*${ issue.key }* ${ issue.fields.summary }](${ getJiraIssueUrl(issue.key) })`);
+          const summary = escapeMarkdownBefore(issue.fields.summary);
+          result.set(issue.key, `[*${ issue.key }* ${ summary }](${ getJiraIssueUrl(issue.key) })`);
         }
         return result;
       },
@@ -75,14 +85,6 @@ const replaceJiraIssueKeys = (text: string, jiraIssuesMap: Map<string, string>):
       text
     );
 };
-
-const escapeMarkdownBefore = (text: string): string => {
-  return text.replace(/([_~`.()])/gi, "\\$1");
-}
-
-const escapeMarkdownAfter = (text: string): string => {
-  return text.replace(/([\-])/gi, "\\$1");
-}
 
 const isUserAllowed = (id: number, username?: string): boolean => {
   const allowedUsers = String(process.env.ALLOWED_USERS).split(';');
