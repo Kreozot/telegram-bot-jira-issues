@@ -77,12 +77,7 @@ const replaceJiraIssueKeys = (text: string, jiraIssuesMap: Map<string, string>):
 };
 
 const escapeMarkdown = (text: string): string => {
-  return text
-    .replace(/_/gi, "\\_")
-    .replace(/-/gi, "\\-")
-    .replace("~", "\\~")
-    .replace(/`/gi, "\\`")
-    .replace(/\./g, "\\.");
+  return text.replace(/([_\-~`.()])/gi, "\\$1");
 }
 
 const isUserAllowed = (id: number, username?: string): boolean => {
