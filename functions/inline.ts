@@ -102,9 +102,20 @@ export default async (ctx: Context) => {
   }
 
   const text = (ctx.inlineQuery.query || "");
-  console.log(1, text);
+  if (text.length >= 256) {
+    const answer = [{
+      id: '0',
+      title: `⚠ Внимание! Сообщение не должно превышать 256 символов!`,
+      type: 'article',
+      input_message_content: {
+        message_text: text,
+        parse_mode: 'MarkdownV2'
+      },
+    }];
+    return ctx.answerInlineQuery(answer as any);
+  }
+
   const issueKeys = getJiraIssueKeys(text);
-  console.log(1, issueKeys);
   if (issueKeys.length === 0) {
     return;
   }
@@ -112,8 +123,6 @@ export default async (ctx: Context) => {
   const jiraIssues = await getJiraIssues(issueKeys);
   const jiraIssuesMap = getJiraIssuesMap(jiraIssues);
   const newText = replaceJiraIssueKeys(escapeMarkdownBefore(text), jiraIssuesMap);
-  console.log(2, newText);
-  console.log(3, escapeMarkdownAfter(newText));
 
   const answer = [{
     id: '0',
