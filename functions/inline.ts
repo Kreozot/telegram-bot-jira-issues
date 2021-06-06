@@ -103,14 +103,14 @@ export default async (ctx: Context) => {
 
   const jiraIssues = await getJiraIssues(issueKeys);
   const jiraIssuesMap = getJiraIssuesMap(jiraIssues);
-  const newText = replaceJiraIssueKeys(text, jiraIssuesMap);
+  const newText = replaceJiraIssueKeys(escapeMarkdown(text), jiraIssuesMap);
 
   const answer = [{
     id: '0',
     title: `Обогатить информацией из Jira (${ [...jiraIssuesMap.keys()].join(', ') })`,
     type: 'article',
     input_message_content: {
-      message_text: escapeMarkdown(newText),
+      message_text: newText,
       parse_mode: 'MarkdownV2'
     },
   }];
