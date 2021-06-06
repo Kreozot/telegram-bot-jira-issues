@@ -88,7 +88,7 @@ const escapeMarkdown = (text: string): string => {
 const isUserAllowed = (id: number, username?: string): boolean => {
   const allowedUsers = String(process.env.ALLOWED_USERS).split(';');
   return allowedUsers.includes(String(id))
-    || ((typeof username === 'string') && allowedUsers.includes(username));
+    || ((typeof username === 'string') && allowedUsers.includes(username.replace('@', '')));
 }
 
 export default async (ctx: Context) => {
